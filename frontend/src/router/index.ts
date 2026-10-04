@@ -11,6 +11,7 @@ const Alarm = () => import('@/views/alarm/index.vue')
 const Defect = () => import('@/views/defect/index.vue')
 const Patrol = () => import('@/views/patrol/index.vue')
 const Spare = () => import('@/views/spare/index.vue')
+const Receiving = () => import('@/views/receiving/index.vue')
 const Meter = () => import('@/views/meter/index.vue')
 const Dispatch = () => import('@/views/dispatch/index.vue')
 const Irradiance = () => import('@/views/irradiance/index.vue')
@@ -34,6 +35,7 @@ const router = createRouter({
     { path: '/defect', name: 'defect', component: Defect },
     { path: '/patrol', name: 'patrol', component: Patrol },
     { path: '/spare', name: 'spare', component: Spare },
+    { path: '/receiving', name: 'receiving', component: Receiving },
     { path: '/meter', name: 'meter', component: Meter },
     { path: '/dispatch', name: 'dispatch', component: Dispatch },
     { path: '/irradiance', name: 'irradiance', component: Irradiance },

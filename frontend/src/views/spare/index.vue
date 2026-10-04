@@ -24,6 +24,39 @@
       </span>
     </p>
 
+    <!-- 到货验收入库结论：直接读 receiving-store 的待入库清单，与到货验收页同一份数量 -->
+    <article class="inbound-card">
+      <header class="batch-edit-head">
+        <strong>组件到货·待入库清单（来源：到货验收）</strong>
+        <span class="batch-text">共 {{ inboundItems.length }} 批 / {{ inboundBoxes }} 箱</span>
+      </header>
+      <table v-if="inboundItems.length" class="data-table">
+        <thead>
+          <tr>
+            <th>到货单号</th><th>供应商</th><th>组件型号</th><th>批次号</th>
+            <th>入库数量(箱)</th><th>到货日期</th><th>放行时间</th><th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in inboundItems" :key="item.batchId">
+            <td>{{ item.noticeNo }}</td>
+            <td>{{ item.supplier }}</td>
+            <td>{{ item.moduleModel }}</td>
+            <td>{{ item.batchNo }}</td>
+            <td><strong>{{ item.boxCount }}</strong></td>
+            <td>{{ item.arrivedAt }}</td>
+            <td>{{ item.acceptedAt }}</td>
+            <td>
+              <RouterLink class="link" :to="`/receiving`">查看验收记录</RouterLink>
+              <button class="link" type="button" @click="confirmInboundOne(item.batchId)">确认入库</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else class="empty-state">暂无到货验收合格放行、等待入库的批次</p>
+      <p v-if="inboundMessage" class="batch-text" :class="inboundOk ? 'ok' : 'warn'">{{ inboundMessage }}</p>
+    </article>
+
     <form class="filter-bar" @submit.prevent="reload">
       <label v-for="field in filterFields" :key="field" class="filter-item">
         <span>{{ field }}</span>
@@ -74,6 +107,10 @@
 import { computed, onMounted, ref } from 'vue'
 
 import {
+  confirmInbound,
+  pendingInbound,
+} from '@/data/receiving-store'
+import {
   downloadEntries,
   listEntries,
   moduleMeta,
@@ -92,6 +129,21 @@ const total = ref(0)
 const errorMessage = ref('')
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
+
+// 待入库清单与到货验收页读同一个函数，入库数量只有这一套。
+const inboundItems = ref(pendingInbound())
+const inboundBoxes = computed(() =>
+  inboundItems.value.reduce((sum, item) => sum + item.boxCount, 0),
+)
+const inboundMessage = ref('')
+const inboundOk = ref(false)
+
+function confirmInboundOne(batchId: string) {
+  const result = confirmInbound([batchId], '值班管理员')
+  inboundMessage.value = result.message
+  inboundOk.value = result.ok
+  inboundItems.value = pendingInbound()
+}
 const statusSummary = computed(() =>
   statuses.map((status: string) => ({
     status,
@@ -124,6 +176,7 @@ function runAction(action: string, row: EntryRow) {
 
 function reload() {
   errorMessage.value = ''
+  inboundItems.value = pendingInbound()
   try {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items

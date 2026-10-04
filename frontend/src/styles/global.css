@@ -35,3 +35,54 @@ body { margin: 0; background: #f6f8fb; color: #1f2937; }
 .error-text { color: #b42318; }
 .status-legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 10px; font-size: 12px; color: var(--muted); }
 .legend-item { background: #eef2f7; border-radius: 999px; padding: 2px 10px; }
+
+/* 到货验收 */
+.policy-card, .register-card, .inbound-card, .notice-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px;
+}
+.policy-card p { font-size: 12px; color: var(--muted); line-height: 1.7; margin: 6px 0; }
+.plan-table { margin-top: 8px; font-size: 12px; }
+.plan-table th, .plan-table td { padding: 4px 8px; }
+.flash { border-radius: 6px; padding: 8px 12px; font-size: 13px; margin: 0 0 12px; }
+.flash-ok { background: #ecfdf3; border: 1px solid #75e0a7; color: #05603a; }
+.flash-error { background: #fef3f2; border: 1px solid #fda29b; color: #b42318; }
+.register-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 10px; }
+.inspect-item span, .batch-label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+.inspect-item input, .batch-edit-row input { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 13px; }
+.batch-edit { border-top: 1px dashed var(--border); padding-top: 10px; }
+.batch-edit-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; }
+.batch-edit-row { display: grid; grid-template-columns: 2fr 1fr auto; gap: 10px; align-items: center; margin-bottom: 8px; }
+.register-actions { display: flex; gap: 8px; margin-top: 10px; }
+.notice-card { padding: 0; overflow: hidden; }
+.notice-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; }
+.notice-head-right { display: flex; align-items: center; gap: 10px; }
+.batch-meta { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.notice-status { font-size: 12px; border-radius: 999px; padding: 2px 10px; }
+.status-pending { background: #fffaeb; color: #b54708; }
+.status-accepted { background: #ecfdf3; color: #05603a; }
+.status-rejected { background: #fef3f2; color: #b42318; }
+.status-done { background: #eef2f7; color: var(--muted); }
+.toggle-mark { font-size: 12px; color: var(--muted); }
+.notice-body { padding: 0 14px 12px; }
+.backfill-tag { font-size: 11px; background: #eef4ff; color: #1f6feb; border-radius: 4px; padding: 1px 6px; margin-left: 6px; }
+.batch-card { border: 1px solid var(--border); border-left-width: 4px; border-radius: 8px; padding: 10px 12px; margin-top: 10px; background: #fcfdff; }
+.batch-pending { border-left-color: #f79009; }
+.batch-accepted { border-left-color: #12b76a; }
+.batch-rejected { border-left-color: #f04438; }
+.batch-head { display: flex; justify-content: space-between; align-items: center; }
+.batch-tag { font-size: 12px; border-radius: 999px; padding: 2px 10px; }
+.tag-pending { background: #fffaeb; color: #b54708; }
+.tag-accepted { background: #ecfdf3; color: #05603a; }
+.tag-rejected { background: #fef3f2; color: #b42318; }
+.batch-note { font-size: 12px; color: var(--muted); margin: 6px 0; }
+.batch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
+.batch-text { font-size: 12px; color: var(--muted); margin: 2px 0; }
+.batch-text.ok { color: #05603a; }
+.batch-text.warn { color: #b42318; }
+.photo-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.progress-track { height: 6px; background: #eef2f7; border-radius: 999px; overflow: hidden; margin-top: 6px; }
+.progress-bar { height: 100%; background: var(--brand); transition: width .2s; }
+.inspect-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; align-items: end; border-top: 1px dashed var(--border); padding-top: 10px; }
+.inspect-form button { height: 32px; }
+.batch-foot { border-top: 1px dashed var(--border); padding-top: 8px; display: flex; gap: 10px; align-items: center; }
+.blocked-line { font-size: 12px; color: #b42318; background: #fef3f2; border-radius: 6px; padding: 6px 10px; margin: 8px 0 0; }
