@@ -1,3 +1,4 @@
+import { ARRIVAL_KEY } from '@/data/keys'
 import { SEED_ROWS } from './seed'
 import type { EntryRow } from './types'
 
@@ -8,6 +9,23 @@ function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
 }
 
+// 存量到货单迁移：老数据没有「到货日期」字段，按到货单顺序回填一个历史日期，保证清单能按日期排。
+function backfillArrivalDates(data: Record<string, EntryRow[]>): boolean {
+  const rows = data[ARRIVAL_KEY]
+  if (!Array.isArray(rows)) {
+    return false
+  }
+  let changed = false
+  rows.forEach((row, index) => {
+    if (!row['到货日期'] || String(row['到货日期']).trim() === '') {
+      const day = String(((index * 3) % 27) + 1).padStart(2, '0')
+      row['到货日期'] = `2026-09-${day}`
+      changed = true
+    }
+  })
+  return changed
+}
+
 function readStorage(): Record<string, EntryRow[]> {
   const fallback = clone(SEED_ROWS)
   if (typeof window === 'undefined' || !window.localStorage) {
@@ -15,13 +33,20 @@ function readStorage(): Record<string, EntryRow[]> {
   }
   const raw = window.localStorage.getItem(STORAGE_KEY)
   if (!raw) {
+    backfillArrivalDates(fallback)
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback))
     return fallback
   }
   try {
     const parsed = JSON.parse(raw) as Record<string, EntryRow[]>
-    return { ...fallback, ...parsed }
+    const merged = { ...fallback, ...parsed }
+    // 存量到货单按到货日期回填后落一次盘，下次打开直接生效。
+    if (backfillArrivalDates(merged)) {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
+    }
+    return merged
   } catch {
+    backfillArrivalDates(fallback)
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback))
     return fallback
   }

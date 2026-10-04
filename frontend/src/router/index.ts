@@ -10,6 +10,7 @@ const Cleaning = () => import('@/views/cleaning/index.vue')
 const Alarm = () => import('@/views/alarm/index.vue')
 const Defect = () => import('@/views/defect/index.vue')
 const Patrol = () => import('@/views/patrol/index.vue')
+const Arrival = () => import('@/views/arrival/index.vue')
 const Spare = () => import('@/views/spare/index.vue')
 const Meter = () => import('@/views/meter/index.vue')
 const Dispatch = () => import('@/views/dispatch/index.vue')
@@ -33,6 +34,7 @@ const router = createRouter({
     { path: '/alarm', name: 'alarm', component: Alarm },
     { path: '/defect', name: 'defect', component: Defect },
     { path: '/patrol', name: 'patrol', component: Patrol },
+    { path: '/arrival', name: 'arrival', component: Arrival },
     { path: '/spare', name: 'spare', component: Spare },
     { path: '/meter', name: 'meter', component: Meter },
     { path: '/dispatch', name: 'dispatch', component: Dispatch },

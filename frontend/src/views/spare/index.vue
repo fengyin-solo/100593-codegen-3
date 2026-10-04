@@ -24,6 +24,34 @@
       </span>
     </p>
 
+    <section class="inbound-box">
+      <h3>待入库清单（到货验收放行件）</h3>
+      <p class="inbound-hint">
+        清单直接来自到货验收已放行、仓库尚未确认的批次，与验收页读到的待入库数量是同一份；确认后片数累加进下方备件台账。
+      </p>
+      <table class="data-table">
+        <thead>
+          <tr><th>到货单号</th><th>供应商</th><th>组件型号</th><th>待入库片数</th><th>放行日期</th><th>操作</th></tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in pendingItems" :key="item.arrivalId">
+            <td>{{ item.arrivalNo }}</td>
+            <td>{{ item.supplier }}</td>
+            <td>{{ item.moduleModel }}</td>
+            <td><strong>{{ item.pieces }}</strong> 片</td>
+            <td>{{ item.releaseDate }}</td>
+            <td><button class="btn primary" type="button" @click="confirmStock(item.arrivalId)">确认入库</button></td>
+          </tr>
+          <tr v-if="!pendingItems.length">
+            <td colspan="6" class="empty-state">暂无放行待入库的组件，到货验收放行后会出现在这里</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="inbound-total">待入库合计：<strong>{{ pendingTotal }}</strong> 片</p>
+    </section>
+
+    <h3 class="section-title">备件台账</h3>
+
     <form class="filter-bar" @submit.prevent="reload">
       <label v-for="field in filterFields" :key="field" class="filter-item">
         <span>{{ field }}</span>
@@ -79,6 +107,7 @@ import {
   moduleMeta,
   runAction as applyAction,
 } from '@/api/local-service'
+import { confirmInbound, listPendingInbound, type PendingInboundItem } from '@/api/arrival-service'
 import type { EntryRow } from '@/data/types'
 
 const meta = moduleMeta('spare')
@@ -122,12 +151,32 @@ function runAction(action: string, row: EntryRow) {
   reload()
 }
 
+const pendingItems = ref<PendingInboundItem[]>([])
+const pendingTotal = computed(() => pendingItems.value.reduce((sum, item) => sum + item.pieces, 0))
+
+function loadPending() {
+  pendingItems.value = listPendingInbound()
+}
+
+function confirmStock(arrivalId: number) {
+  errorMessage.value = ''
+  const result = confirmInbound(arrivalId)
+  if (!result.ok) {
+    errorMessage.value = result.message
+    return
+  }
+  errorMessage.value = result.message
+  loadPending()
+  reload()
+}
+
 function reload() {
   errorMessage.value = ''
   try {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items
     total.value = payload.total
+    loadPending()
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '备品备件列表读取失败'
   }
@@ -135,3 +184,17 @@ function reload() {
 
 onMounted(reload)
 </script>
+
+<style scoped>
+.inbound-box {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+.inbound-box h3 { margin: 0 0 6px; font-size: 15px; }
+.inbound-hint { color: var(--muted); font-size: 12.5px; margin: 0 0 10px; }
+.inbound-total { margin: 8px 0 0; font-size: 13px; text-align: right; }
+.section-title { font-size: 15px; margin: 14px 0 8px; }
+</style>
